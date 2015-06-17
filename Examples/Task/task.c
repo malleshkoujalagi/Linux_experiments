@@ -1,6 +1,7 @@
 #include<linux/init.h>
 #include<linux/module.h>
 #include<linux/sched.h>
+<<<<<<< HEAD
 #include<linux/slab.h>
 
 
@@ -14,6 +15,10 @@ struct meminf *mem_fd;
 	
 
 int task_info(void)
+=======
+
+
+void task_info(void)
 {
 	struct task_struct *mytask=current;
 	struct thread_info *mythread=current_thread_info();
