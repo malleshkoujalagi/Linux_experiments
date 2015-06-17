@@ -1,9 +1,19 @@
 #include<linux/init.h>
 #include<linux/module.h>
 #include<linux/sched.h>
+#include<linux/slab.h>
 
 
-void task_info(void)
+struct meminf{
+	char *name;
+	int fd;
+};
+
+
+struct meminf *mem_fd;
+	
+
+int task_info(void)
 {
 	struct task_struct *mytask=current;
 	struct thread_info *mythread=current_thread_info();
@@ -13,6 +23,14 @@ void task_info(void)
 		mythread->status, mythread->cpu, mythread->flags,
 		mythread->saved_preempt_count);
 	
+	mem_fd = kmalloc(sizeof(struct meminf), GFP_KERNEL);
+	if(!mem_fd){
+		printk(KERN_ALERT "memory allocation failed\n");
+		return 0;
+	}
+        //mem_fd->fd=121212;  
+
+	return 1;	
 }
 
 
@@ -27,6 +45,10 @@ static int __init task_init(void)
 static void __exit task_exit(void)
 {
 	printk(KERN_ALERT "Task info End\n");
+	if(mem_fd){
+		printk(KERN_ALERT "%d--->\n",mem_fd->fd);
+		kfree(mem_fd);
+	}	
 
 }
 
