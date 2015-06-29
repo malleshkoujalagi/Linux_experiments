@@ -15,7 +15,6 @@ static __init int my_cdev_init(void)
 		return -1;
 	}
 	printk(KERN_ALERT "Hey dude\n");
-	MKDEV(MAJOR(device_no), MINOR(device_no));
 	printk(KERN_ALERT "<Major Number:Minor Number><%d:%d>\n", MAJOR(device_no), MINOR(device_no));
 	return 0;
 }
