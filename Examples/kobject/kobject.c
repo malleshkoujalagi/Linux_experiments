@@ -70,6 +70,22 @@ static const struct attribute_group attr_grp = {
 	.attrs = attrs,
 };
 
+
+
+static ssize_t my_bin_read(struct file *filep, struct kobject *kobj, struct bin_attribute *bin_attr,
+			char *buf, loff_t ppos, size_t count)
+{
+
+	return count;
+}
+
+static struct bin_attribute bin_attribute = {
+	.attr = { .name = "my_binary",
+		  .mode = S_IRUGO,},
+	.read = my_bin_read,	
+};
+
+
 static int my_kobj_init(void)
 {
 
@@ -81,13 +97,26 @@ static int my_kobj_init(void)
 	//my_kobj = kobject_create_and_add("my_kobj", hypervisor_kobj);
 	//my_kobj = kobject_create_and_add("my_kobj", power_kobj);
 	//my_kobj = kobject_create_and_add("my_kobj", mm_kobj);
-	if(!my_kobj)
-		return -ENOMEM;
+	if(!my_kobj) {
+		result = -ENOMEM;
+		goto exit;
+	}
 	
 	result = sysfs_create_group(my_kobj, &attr_grp);
 	if(result)
-		kobject_put(my_kobj);
+		goto kset_exit;
 	
+	result = sysfs_create_bin_file(my_kobj, &bin_attribute);
+	if(result)
+		goto group_exit;
+
+	return 0;
+
+group_exit:
+ 	sysfs_remove_group(my_kobj, &attr_grp);
+kset_exit:
+	kobject_put(my_kobj);
+exit:
 	return result;
 }
 
