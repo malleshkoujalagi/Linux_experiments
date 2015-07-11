@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <string.h>
 
 
-#define DEV_NAME "/dev/hackctrl"
+#define DEV_NAME "/dev/hack"
 
 int main()
 {
@@ -24,6 +25,7 @@ int main()
 		case 'w':
 			printf("Enter data\n");
 			scanf("%s",wbuf);
+			strcpy(wbuf,"Hi Mallesh!!!");
 			write(fd, wbuf,sizeof(wbuf));
 			break;
 		case 'r':
