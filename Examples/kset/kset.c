@@ -25,7 +25,7 @@ struct my_kobj_attribute {
 	ssize_t (*show)(struct my_kobj *mykobj, struct my_kobj_attribute *attr, 
 	char *buf);
 	ssize_t (*store)(struct my_kobj *mykobj, struct my_kobj_attribute *attr,
-	char *buf, size_t count);
+	const char *buf, size_t count);
 };
 
 
@@ -34,6 +34,7 @@ struct my_kobj_attribute {
 static void my_release(struct kobject *kobj)
 {
 	struct my_kobj *temp;
+	printk(KERN_ALERT "Inside:%s\n", __FUNCTION__);
 	temp = container_of(kobj, struct my_kobj, kobj);
 	kfree(temp);
 }
@@ -42,14 +43,29 @@ static void my_release(struct kobject *kobj)
 
 static ssize_t my_sysfs__show(struct kobject *kobj, struct attribute *attr, char *buf)
 {
+	struct my_kobj *kobj_temp;
+	struct my_kobj_attribute *attr_temp;
 
-	return 0;
+	kobj_temp = container_of(kobj, struct my_kobj, kobj);
+	attr_temp = container_of(attr, struct my_kobj_attribute, attr);
+	if(!attr_temp->show)
+		return -EIO;
+
+	return attr_temp->show(kobj_temp, attr_temp, buf);
 }
 
 static ssize_t my_sysfs_store(struct kobject *kobj, struct attribute *attr, 
 	const char *buf, size_t count)
 {
-	return 0;
+	struct my_kobj *kobj_temp;
+	struct my_kobj_attribute *attr_temp;
+
+	kobj_temp = container_of(kobj, struct my_kobj, kobj);
+	attr_temp = container_of(attr, struct my_kobj_attribute, attr);
+
+	if(!attr_temp->store)
+		return -EIO;	
+	return attr_temp->store(kobj_temp, attr_temp, buf, count);
 }
 
 
@@ -62,27 +78,40 @@ static struct sysfs_ops my_sysfs_ops = {
 static ssize_t a_show(struct my_kobj *kobj, struct my_kobj_attribute *attr,
 	char *buf)
 {
-
-	return 0;
+	return sprintf(buf,"%d\n", kobj->a);
 }
 
 static ssize_t a_store(struct my_kobj *kobj, struct my_kobj_attribute *attr,
-	char *buf, size_t count)
+	const char *buf, size_t count)
 {
-	return 0;
+	sscanf(buf, "%du", &kobj->a);
+	return count;
 }
 
 static ssize_t b_show(struct my_kobj *kobj, struct my_kobj_attribute *attr,
 	char *buf)
 {
-
-	return 0;
+	int temp;
+	if(strcmp(attr->attr.name, "b"))
+		temp = kobj->b;
+	else
+		temp = kobj->c;
+	
+	return sprintf(buf, "%d\n", temp);
 }
 
 static ssize_t b_store(struct my_kobj *kobj, struct my_kobj_attribute *attr,
-	char *buf, size_t count)
+	const char *buf, size_t count)
 {
-	return 0;
+	int var;
+	
+	sscanf(buf, "%du",&var);
+	if(strcmp(attr->attr.name, "b"))
+		kobj->b = var;
+	else
+		kobj->c = var;
+	
+	return count;
 }
 
 static struct my_kobj_attribute a_attr =
@@ -123,7 +152,7 @@ static struct my_kobj *my_create_kobject(const char *name)
 	error = kobject_init_and_add(&temp->kobj, &my_kobj_type, NULL, name);
 	if(error) {
 		kobject_put(&temp->kobj);
-		kfree(temp);
+		//kfree(temp);
 		return NULL;
 	}
 	
