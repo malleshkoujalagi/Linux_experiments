@@ -8,7 +8,7 @@
 struct kobject *my_parent;
 struct kobject *my_kobj;
 struct kset *my_kset;
-
+static unsigned int flag = 1;
 
 static struct attribute my_kobj_attrs = {
 	.name = "my_kobj_attr",	
@@ -19,15 +19,52 @@ static struct attribute my_kobj_attrs = {
 static ssize_t my_kobj_sysfs_show(struct kobject *kobj, struct attribute *attr,
 	char *buf)
 {
-
-	return 0;
+	size_t count = 0;
+    	count += sprintf(&buf[count], "%du\n", flag);
+    	return count;
 }
 
 static ssize_t my_kobj_sysfs_store(struct kobject *kobj, struct attribute *attr, 
 	const char *buf, size_t count)
 {
 
-	return 0;
+    flag = buf[0] - '0';
+
+    switch (flag) {
+    case 0:
+        kobject_uevent(kobj, KOBJ_ADD);
+        break;
+
+    case 1:
+        kobject_uevent(kobj, KOBJ_REMOVE);
+        break;
+
+    case 2:
+        kobject_uevent(kobj, KOBJ_CHANGE);
+        break;
+
+    case 3:
+        kobject_uevent(kobj, KOBJ_MOVE);
+        break;
+
+    case 4:
+        kobject_uevent(kobj, KOBJ_ONLINE);
+        break;
+
+    case 5:
+        kobject_uevent(kobj, KOBJ_OFFLINE);
+        break;
+
+    case 6:
+        kobj->uevent_suppress = 1;
+        break;
+
+    case 7:
+        kobj->uevent_suppress = 0;
+        break;
+    }
+
+    return count;
 }
 static struct sysfs_ops my_sysfs_ops = {
 	.show  = my_kobj_sysfs_show, 
@@ -66,6 +103,8 @@ static int demo1_kobj_init(void)
 	err = kobject_init_and_add(my_kobj, &my_kobj_type, my_parent, "my_kobj");
 	if(err)
 		goto kobj_init_exit;
+	
+	//kobject_uevent(my_kobj, KOBJ_ADD);
 
 	err = sysfs_create_file(my_kobj, &my_kobj_attrs);
 	
