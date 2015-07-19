@@ -40,7 +40,7 @@ static ssize_t memdev_read(struct file *filep, char __user *buf,
 	}
 	
 	printk(KERN_ALERT "Called %s--%d\n", __FUNCTION__, __LINE__);
-	return count;
+	return len;
 }
 
 
@@ -70,6 +70,34 @@ static ssize_t memdev_write(struct file *filep, const char __user *buf,
 	return ret;
 }
 
+
+	loff_t (*llseek) (struct file *, loff_t, int);
+static loff_t memdev_llseek(struct file *filep, loff_t offset, int whence)
+{
+	int newpos;
+
+	switch(whence) {
+		case 0:
+			newpos = offset;
+		break;
+		case 1:
+			newpos = filep->f_pos + offset;
+		break;
+		case 2:
+			newpos = MEMDEV_SIZE - 1 + offset;
+		break;
+		default:
+			return -EINVAL;
+	}
+
+	if((newpos < 0) || (newpos > MEMDEV_SIZE))
+		return -EINVAL;
+
+	filep->f_pos = newpos;
+	return newpos;
+
+}
+
 static int memdev_open(struct inode *inodep, struct file *filep)
 {
 	int num;
@@ -93,6 +121,7 @@ static struct file_operations memdev_ops = {
 	.release	= memdev_close,
 	.read		= memdev_read,
 	.write		= memdev_write,
+	.llseek		= memdev_llseek,
 };
 
 
@@ -160,8 +189,10 @@ static void memdev_exit(void)
 	
 	printk(KERN_ALERT "Called %s--%d\n", __FUNCTION__, __LINE__);
 	for(i=0; i < MEMDEV_NUMBER; i++) {
-		if(memdev_p[i].data)
+		if(memdev_p[i].data) {
 			kfree(memdev_p[i].data);
+			memdev_p[i].data=NULL;
+		}
 	}
 	
 	kfree(memdev_p);
