@@ -3,16 +3,14 @@
 
 
 #ifndef MAJOR_NO
-#define MAJOR_NO 255
+#define MAJOR_NO 	0
 #endif
 
-#ifndef MEMDEV_NUMBER
-#define MEMDEV_NUMBER 2
-#endif
+#define MEMDEV_NUMBER	1
+#define MEMDEV_SIZE	4096 
 
 
-
-struct memdev {
+struct memdev_t {
 	char *data;
 	unsigned long size;
 

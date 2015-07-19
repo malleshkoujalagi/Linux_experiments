@@ -128,10 +128,11 @@ exit:
 
 static void demo1_kobj_exit(void)
 {
-	sysfs_remove_file(my_kobj, &my_kobj_attrs);
+	//sysfs_remove_file(my_kobj, &my_kobj_attrs);
+	//kset_unregister(my_kset);
+	kobject_put(my_kobj);
+	//kobject_put(my_parent);
 	kset_unregister(my_kset);
-	kobject_del(my_kobj);
-	kobject_del(my_parent);
 }
 
 

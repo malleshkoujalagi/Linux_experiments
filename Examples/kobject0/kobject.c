@@ -122,6 +122,8 @@ exit:
 
 static void my_kobj_exit(void)
 {
+
+	//sysfs_remove_group(my_kobj, &attr_grp);
 	kobject_put(my_kobj);
 }
 
