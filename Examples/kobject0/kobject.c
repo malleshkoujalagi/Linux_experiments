@@ -91,8 +91,8 @@ static int my_kobj_init(void)
 
 	int result;
 	
-	my_kobj = kobject_create_and_add("my_kobj", NULL);
-	//my_kobj = kobject_create_and_add("my_kobj", kernel_kobj);
+	//my_kobj = kobject_create_and_add("my_kobj", NULL);
+	my_kobj = kobject_create_and_add("my_kobj", kernel_kobj);
 	//my_kobj = kobject_create_and_add("my_kobj", firmware_kobj);
 	//my_kobj = kobject_create_and_add("my_kobj", hypervisor_kobj);
 	//my_kobj = kobject_create_and_add("my_kobj", power_kobj);

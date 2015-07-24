@@ -179,7 +179,7 @@ exitmem:
 
 exit:
 	cdev_del(&cdev);
-	unregister_chrdev_region(dev_no, mem_major);
+	unregister_chrdev_region(dev_no, MEMDEV_NUMBER);
 	return err;
 }
 
