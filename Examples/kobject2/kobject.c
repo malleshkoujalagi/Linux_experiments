@@ -27,17 +27,19 @@ struct g_kobject2_attribute {
 static ssize_t x_show(struct my_kobject *kobj, struct g_kobject2_attribute *attr,
 	char *buf)
 {
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
 	return sprintf(buf, "%d\n", kobj->x);
 }
 static ssize_t x_store(struct my_kobject *kobj, struct g_kobject2_attribute *attr,
 	const char *buf, size_t len)
 {
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
 	sscanf(buf, "%d\n", &kobj->x);
 	return len; 
 }
 
 struct g_kobject2_attribute x_attr =
-	__ATTR(x, 0644, x_show, x_store);
+	__ATTR(enable, 0644, x_show, x_store);
 
 static struct attribute *kobject2_attr [] = {
 	&x_attr.attr,
@@ -85,6 +87,7 @@ static struct sysfs_ops sys_kobject2_ops = {
 static void kobject2_release(struct kobject *kobj)
 {
 	struct my_kobject *temp;
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
 	temp = container_of(kobj, struct my_kobject, kobj);
 	kfree(temp);
 	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
@@ -95,6 +98,47 @@ static struct kobj_type kobject2_type = {
 	.sysfs_ops 	= &sys_kobject2_ops,
 	.default_attrs	= kobject2_attr,
 };
+
+
+
+static int kset_my_filter(struct kset *kset, struct kobject *kobj)
+{
+	struct kobj_type *ktemp = get_ktype(kobj);
+		
+	//struct my_kobject *temp;
+	//temp = container_of(kobj, struct my_kobject, kobj);
+	
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
+	if(ktemp == &kobject2_type)
+		return 1;
+	return 0;
+}
+
+static const char * kset_my_name(struct kset *kset, struct  kobject *kobj)
+{
+	struct my_kobject *temp;
+	
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
+	temp = container_of(kobj, struct my_kobject, kobj);
+
+	if(!temp)
+		return NULL;
+	return temp->kobj.name;
+}
+
+static int kset_my_uevent(struct kset *kset, struct kobject *kobj, 
+	struct kobj_uevent_env *env)
+{
+
+	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
+	return 0;
+}
+
+static struct kset_uevent_ops kset_my_kobject2 = {
+	.filter = kset_my_filter,
+	.name	= kset_my_name,
+	.uevent = kset_my_uevent,
+};
  
 static int kobj2_init(void)
 {
@@ -102,7 +146,7 @@ static int kobj2_init(void)
 
 	printk(KERN_ALERT "Fun:%s--%d\n", __FUNCTION__,__LINE__);
 
-	kset = kset_create_and_add("kset_hack", NULL, kernel_kobj);
+	kset = kset_create_and_add("kset_hack", &kset_my_kobject2, kernel_kobj);
 
 	if(!kset) {
 		err = -ENOMEM;
