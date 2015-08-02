@@ -80,6 +80,8 @@ static ssize_t my_dev_store(struct device *dev, struct device_attribute *attr,
 struct device_attribute device_attr = 
 __ATTR(my_dev, 0644, my_dev_show, my_dev_store);
 
+=======
+>>>>>>> origin/master
 static void my_bus_device_release(struct device *dev)
 {
 	
