@@ -28,7 +28,6 @@ static int my_bus_match(struct device *dev, struct device_driver *drv)
 	return !strncmp(dev_name(dev),drv->name,strlen(drv->name));
 }
 
-	int (*uevent)(struct device *dev, struct kobj_uevent_env *env);
 static int my_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
 	
@@ -57,6 +56,41 @@ struct bus_type my_bus_type = {
 	.remove		= my_bus_release,
 };
 
+EXPORT_SYMBOL(my_bus_type);
+
+
+static ssize_t my_dev_show(struct device *dev,struct device_attribute *attr,
+	char *buf)
+{
+
+	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
+	return 0;
+}
+
+static ssize_t my_dev_store(struct device *dev, struct device_attribute *attr,
+	const char *buf, size_t len)
+{
+
+	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
+	return len;
+}
+
+
+
+struct device_attribute device_attr = 
+__ATTR(my_dev, 0644, my_dev_show, my_dev_store);
+
+static void my_bus_device_release(struct device *dev)
+{
+	
+	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
+}
+struct device my_bus_device = {
+	.init_name	= "my_bus_dev",
+	.release	= my_bus_device_release,
+};
+
+EXPORT_SYMBOL(my_bus_device);
 
 static int my_bus_init(void)
 {
@@ -72,8 +106,21 @@ static int my_bus_init(void)
 		printk("<0> Bus create file failed\n");
 		goto bus_err_exit;
 	}
-		
+	
+	err = device_register(&my_bus_device);	
+	if(err < 0)
+		goto bus_err_exit;
+
+	err = device_create_file(&my_bus_device, &device_attr);
+	
+	if(err < 0)
+		goto dev_exit;
+
+	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
 	return 0;
+
+dev_exit:
+	device_unregister(&my_bus_device);
 
 bus_err_exit:	
 	bus_unregister(&my_bus_type);
@@ -84,7 +131,9 @@ exit:
 static void my_bus_exit(void)
 {
 	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
+	device_unregister(&my_bus_device);
 	bus_unregister(&my_bus_type);
+
 }
 
 
