@@ -6,6 +6,7 @@
 
 
 
+/*************BUS START*********************/
 static ssize_t show_bus_attr(struct bus_type *bus_type,
 	char *buf)
 {
@@ -34,7 +35,7 @@ static int my_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
 	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
 	return 0;
 }
-
+#if 0
 static int my_bus_probe(struct device *dev)
 {
 
@@ -47,18 +48,20 @@ static int my_bus_release(struct device *dev)
 	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
 	return 0;
 }
-
+#endif 
 struct bus_type my_bus_type = {
 	.name 		= "my_bus",
 	.match		= my_bus_match,
 	.uevent 	= my_bus_uevent,
-	.probe		= my_bus_probe,
-	.remove		= my_bus_release,
+	//.probe		= my_bus_probe,
+	//.remove		= my_bus_release,
 };
 
 EXPORT_SYMBOL(my_bus_type);
 
+/*****************BUS END*****************************/
 
+/*****************Device START************************/
 static ssize_t my_dev_show(struct device *dev,struct device_attribute *attr,
 	char *buf)
 {
@@ -80,8 +83,6 @@ static ssize_t my_dev_store(struct device *dev, struct device_attribute *attr,
 struct device_attribute device_attr = 
 __ATTR(my_dev, 0644, my_dev_show, my_dev_store);
 
-=======
->>>>>>> origin/master
 static void my_bus_device_release(struct device *dev)
 {
 	
@@ -93,6 +94,42 @@ struct device my_bus_device = {
 };
 
 EXPORT_SYMBOL(my_bus_device);
+/*************Device END************************/
+
+/*************Driver START*********************/
+
+
+static ssize_t show_my_bus_driver(struct device_driver *drv, char *buf)
+{
+
+	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
+	return 0;
+}
+
+struct driver_attribute my_bus_driver_attr =
+__ATTR(driver_attr, 0644, show_my_bus_driver, NULL);
+
+static int my_bus_driver_probe(struct device *dev)
+{
+
+	printk(KERN_ALERT "Inside Fun:%s and %d\n device:%s",__FUNCTION__, __LINE__ , dev_name(dev));
+	return 0;
+}
+
+static int my_bus_driver_remove(struct device *dev)
+{
+
+	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
+	return 0;
+}
+
+struct device_driver my_bus_driver = {
+	.name		= "my_driver",
+	.bus		= &my_bus_type,
+	.probe		= my_bus_driver_probe,
+	.remove		= my_bus_driver_remove
+};
+/*************Driver END***********************/
 
 static int my_bus_init(void)
 {
@@ -118,14 +155,25 @@ static int my_bus_init(void)
 	if(err < 0)
 		goto dev_exit;
 
+	err = driver_register(&my_bus_driver);
+	if(err < 0)
+		goto dev_exit;
+
+	err = driver_create_file(&my_bus_driver, &my_bus_driver_attr);
+
+	if(err < 0)
+		goto drv_exit;
+
 	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
 	return 0;
+drv_exit:
+	driver_unregister(&my_bus_driver);
 
 dev_exit:
 	device_unregister(&my_bus_device);
 
-bus_err_exit:	
-	bus_unregister(&my_bus_type);
+bus_err_exit:
+	bus_unregister(&my_bus_type);	
 exit:
 	return err;
 }
@@ -133,6 +181,7 @@ exit:
 static void my_bus_exit(void)
 {
 	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
+	driver_unregister(&my_bus_driver);
 	device_unregister(&my_bus_device);
 	bus_unregister(&my_bus_type);
 
