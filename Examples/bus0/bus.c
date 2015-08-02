@@ -80,8 +80,10 @@ static ssize_t my_dev_store(struct device *dev, struct device_attribute *attr,
 
 
 
-struct device_attribute device_attr = 
-__ATTR(my_dev, 0644, my_dev_show, my_dev_store);
+//struct device_attribute dev_attr_read = 
+//__ATTR(read, 0644, my_dev_show, my_dev_store);
+
+DEVICE_ATTR(read, 0644, my_dev_show, my_dev_store);
 
 static void my_bus_device_release(struct device *dev)
 {
@@ -106,8 +108,10 @@ static ssize_t show_my_bus_driver(struct device_driver *drv, char *buf)
 	return 0;
 }
 
-struct driver_attribute my_bus_driver_attr =
-__ATTR(driver_attr, 0644, show_my_bus_driver, NULL);
+//struct driver_attribute driver_attr_read =
+//__ATTR(read, 0644, show_my_bus_driver, NULL);
+
+DRIVER_ATTR(read, 0644, show_my_bus_driver, NULL);
 
 static int my_bus_driver_probe(struct device *dev)
 {
@@ -150,7 +154,7 @@ static int my_bus_init(void)
 	if(err < 0)
 		goto bus_err_exit;
 
-	err = device_create_file(&my_bus_device, &device_attr);
+	err = device_create_file(&my_bus_device, &dev_attr_read);
 	
 	if(err < 0)
 		goto dev_exit;
@@ -159,7 +163,7 @@ static int my_bus_init(void)
 	if(err < 0)
 		goto dev_exit;
 
-	err = driver_create_file(&my_bus_driver, &my_bus_driver_attr);
+	err = driver_create_file(&my_bus_driver, &driver_attr_read);
 
 	if(err < 0)
 		goto drv_exit;
