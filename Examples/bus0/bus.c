@@ -91,7 +91,7 @@ static void my_bus_device_release(struct device *dev)
 	printk(KERN_ALERT "Inside Fun:%s and %d-->%s\n",__FUNCTION__, __LINE__, dev_name(dev));
 }
 struct device my_bus_device = {
-	.init_name	= "my_bus_dev",
+	.init_name	= "my_driver",
 	.release	= my_bus_device_release,
 };
 
@@ -135,6 +135,11 @@ struct device_driver my_bus_driver = {
 };
 /*************Driver END***********************/
 
+/*************Class Start***********************/
+struct class *my_class;
+
+/************Class END*************************/
+
 static int my_bus_init(void)
 {
 	int err;
@@ -149,11 +154,18 @@ static int my_bus_init(void)
 		printk("<0> Bus create file failed\n");
 		goto bus_err_exit;
 	}
+
+	my_class = class_create(THIS_MODULE, "my_class");
+
+	if(my_class < 0) {
+		err = PTR_ERR(my_class);
+		goto bus_err_exit;
+	}
 	
 	err = device_register(&my_bus_device);	
 	if(err < 0)
-		goto bus_err_exit;
-
+		goto dev_reg_exit;
+	
 	err = device_create_file(&my_bus_device, &dev_attr_read);
 	
 	if(err < 0)
@@ -175,7 +187,8 @@ drv_exit:
 
 dev_exit:
 	device_unregister(&my_bus_device);
-
+dev_reg_exit:
+	class_destroy(my_class);
 bus_err_exit:
 	bus_unregister(&my_bus_type);	
 exit:
@@ -187,6 +200,7 @@ static void my_bus_exit(void)
 	printk(KERN_ALERT "Inside Fun:%s and %d\n",__FUNCTION__, __LINE__ );
 	driver_unregister(&my_bus_driver);
 	device_unregister(&my_bus_device);
+	class_destroy(my_class);
 	bus_unregister(&my_bus_type);
 
 }
