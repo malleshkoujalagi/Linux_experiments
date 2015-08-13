@@ -5,12 +5,15 @@
 #include <linux/string.h>
 #include <linux/kobject.h>
 
-struct xkobj {
+struct xkobject {
+	/* To add as kobject**/
+	struct kobject kobj;
+
 	char *xname;
 	struct list_head entry;
-	struct xkobj *parent;
-	struct kset *xkset;
-	struct ktype *xktype;
+	struct xkobject *parent;
+	struct xkset *xkset;
+	struct xktype *xktype;
 	struct kernfs_node *sd;
 	struct kref kref;
 
@@ -19,6 +22,54 @@ struct xkobj {
 	unsigned int state_add_uevent_sent:1;
 	unsigned int state_remove_uevent_sent:1;
 	unsigned int uevent_suppress:1;
+};
+
+
+struct xkset {
+	struct list_head list;
+	spinlock_t list_lock;
+	struct xkobject xkobj;
+	const struct kset_uevent_ops *uevent_ops;
+};
+
+struct xkobj_type {
+	void (*release)(struct xkobject *xkobj);
+	const struct sysfs_ops *sysfs_ops;
+	struct attribute **default_attrs;
+	const void *(*namespace)(struct xkobject *xkobj);
+};
+
+struct xkobj_attribute {
+	struct attribute attr;
+	ssize_t (*show)(struct xkobject *, struct xkobj_attribute *, char *);
+	ssize_t (*store)(struct xkoject *, struct xkobj_attribute *, const char *, size_t );
+};	
+
+static void xxx_release(struct xkobject *xkobj)
+{
+
+}
+
+static ssize_t xxx_show(struct kobject *kobj, struct attribute *attr, char *buf)
+{
+
+	return 0;
+}
+
+static ssize_t xxx_store(struct kobject *kobj, struct attribute *attr, 
+	const char *buf, size_t count)
+{
+
+	return count;
+}
+const struct sysfs_ops xxx_sysfs_ops = {
+	.show 	= xxx_show,
+	.store	= xxx_store,
+};
+
+struct xkobj_type x_type = {
+	.release 	= xxx_release,
+	.sysfs_ops	= &xxx_sysfs_ops,
 };
 
 static int xkobj_init(void)
