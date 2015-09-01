@@ -1,0 +1,2 @@
+ wine  ~/.wine/drive_c/T32/bin/windows/t32marm.exe -c ~/.wine/drive_c/Stability/T32_config_sim00.t32
+cd .wine\drive_c\Stability\2nd_best_example\06_24\Lux\ramdump\

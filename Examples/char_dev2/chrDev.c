@@ -131,3 +131,4 @@ module_exit(dev_exit);
 
 
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Mallesh Koujalagi<mallesh.koujalagi@gmail.com>");

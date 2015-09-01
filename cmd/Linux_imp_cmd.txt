@@ -1,0 +1,45 @@
+/********QEMU Simulator********/
+qemu-system-i386 -s -kernel arch/x86/boot/bzImage -initrd /boot/initrd.img-3.14.39 -S /dev/zero
+
+qemu-system-i386 -s -kernel /boot/vmlinuz-3.14.39 -initrd /boot/initrd.img-3.14.39 -S /dev/zero
+/*****Re-direct to termina**********/
+qemu-system-i386 -s -kernel  arch/x86/boot/bzImage -initrd /boot/initrd.img-3.14.39 -S /dev/zero -serial stdio -append "root=/dev/ram0 console=ttyAMA0  console=ttyS0" ------>Standard
+
+gdb vmlinux
+target remote localhost:1234
+OR
+gdb -ex 'target remote localhost:1234' -ex 'set breakpoint auto-hw' -ex 'break start_kernel' -ex c ./vmlinux ------>standard
+gdb -ex 'target remote localhost:1234' -ex 'break rapl_pmu_init' -ex c ./vmlinux
+
+/***********GDB file direct**************/
+set logging on gdb.txt
+
+CTRL+ALT ENTER to get mouse icon in QEMU.
+
+
+/*************GDB***********/
+win--> to remove ctrl+x a
+x/20i $pc
+info all-registers
+set print pretty on
+print *variable--> p /xs *bus_kset
+explore struct varialbe
+pt--> display type of structure info
+
+x/nfu addr-->p /xs *bus_kset
+/***Program stop location******/
+f
+i prog
+
+/******Check register value*****/
+info registers
+info all-registers
+p /x $pc
+info f
+
+/********Struct info*****/
+pt struct kobject
+
+/****Memory dump using gdb********/
+dump binary memory /home/pi/x86.bin 0xc0000000 0xffffffff
+
