@@ -43,3 +43,13 @@ pt struct kobject
 /****Memory dump using gdb********/
 dump binary memory /home/pi/x86.bin 0xc0000000 0xffffffff
 
+
+
+/*************CSCOPE and CTAGS***************/
+ctags -R
+cscope -R
+
+/****Function and variable travels******/
+ctrl+}--->Invoke function
+ctrl+t--->Go back to functio
+
