@@ -1,4 +1,8 @@
 /********QEMU Simulator********/
+
+
+sudo ../../qemu/bin/debug/native/x86_64-softmmu/qemu-system-x86_64 -s -kernel arch/x86_64/boot/bzImage -initrd /boot/initrd.img-3.19.0-25-generic -S -serial stdio -append "root=/dev/ram0 console=ttyAMA0  console=ttyS0" -drive file=/home/pi/kernel_hacker/roofs/rootfs.img,format=raw----------->working on 64 bit
+
 qemu-system-i386 -s -kernel arch/x86/boot/bzImage -initrd /boot/initrd.img-3.14.39 -S /dev/zero
 
 qemu-system-i386 -s -kernel /boot/vmlinuz-3.14.39 -initrd /boot/initrd.img-3.14.39 -S /dev/zero
