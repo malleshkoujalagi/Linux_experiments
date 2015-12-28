@@ -75,16 +75,14 @@ static void net_dev_setup(struct net_device *dev)
 int net_dev_init(void)
 {
 	int err;
-
-	g_net_dev_ptr = alloc_netdev(0, "net_dev_exp", net_dev_setup);
+	g_net_dev_ptr = alloc_netdev(0, "net_dev_exp", NET_NAME_UNKNOWN, net_dev_setup);
 	
-	if(!g_net_dev_ptr)
+	if(unlikely(!g_net_dev_ptr))
 		return -ENOMEM;
 
 	err = register_netdevice(g_net_dev_ptr);
 	if(err < 0)
 		goto err_reg;
-
 	return 0;
 
 err_reg:

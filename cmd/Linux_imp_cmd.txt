@@ -1,4 +1,5 @@
 /********QEMU Simulator********/
+/********QEMU Simulator********/
 
 
 sudo ../../qemu/bin/debug/native/x86_64-softmmu/qemu-system-x86_64 -s -kernel arch/x86_64/boot/bzImage -initrd /boot/initrd.img-3.19.0-25-generic -S -serial stdio -append "root=/dev/ram0 console=ttyAMA0  console=ttyS0" -drive file=/home/pi/kernel_hacker/roofs/rootfs.img,format=raw----------->working on 64 bit
@@ -15,12 +16,18 @@ OR
 gdb -ex 'target remote localhost:1234' -ex 'set breakpoint auto-hw' -ex 'break start_kernel' -ex c ./vmlinux ------>standard
 gdb -ex 'target remote localhost:1234' -ex 'break rapl_pmu_init' -ex c ./vmlinux
 
+
+/********QEMU Simulator********/
+/********QEMU Simulator********/
+
+
 /***********GDB file direct**************/
 set logging on gdb.txt
 
 CTRL+ALT ENTER to get mouse icon in QEMU.
 
 
+/*************GDB***********/
 /*************GDB***********/
 win--> to remove ctrl+x a
 x/20i $pc
@@ -47,8 +54,11 @@ pt struct kobject
 /****Memory dump using gdb********/
 dump binary memory /home/pi/x86.bin 0xc0000000 0xffffffff
 
+/*************GDB***********/
+/*************GDB***********/
 
 
+/*************CSCOPE and CTAGS***************/
 /*************CSCOPE and CTAGS***************/
 ctags -R
 cscope -R
@@ -57,3 +67,16 @@ cscope -R
 ctrl+}--->Invoke function
 ctrl+t--->Go back to functio
 
+/*************CSCOPE and CTAGS***************/
+/*************CSCOPE and CTAGS***************/
+
+
+
+/******************GIT**************/
+/********************************/
+
+/*To remove untracked file in git*/
+git clean -f Net/net_device/.tmp_versions/net_dev.mod
+
+/********************************/
+/********************************/
