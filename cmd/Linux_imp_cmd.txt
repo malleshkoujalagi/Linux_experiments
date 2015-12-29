@@ -17,6 +17,14 @@ gdb -ex 'target remote localhost:1234' -ex 'set breakpoint auto-hw' -ex 'break s
 gdb -ex 'target remote localhost:1234' -ex 'break rapl_pmu_init' -ex c ./vmlinux
 
 
+
+/*********Install ubuntu on Qemu*************/
+./qemu/build/x86_64-softmmu/qemu-system-x86_64 -drive file="/home/pi/kernel_hacker/rootfs/ubuntu_15_10.img",if=virtio,index=0 -cdrom /home/pi/kernel_hacker/rootfs/ubuntu_img/ubuntu-15.10-desktop-amd64.iso -boot d  -net nic,macaddr=52:54:00:fa:ce:01,model=virtio -net user,hostfwd=tcp::2001-:22 -m 1024 -enable-kvm -usbdevice mouse
+
+/**Boot**/
+./qemu/build/x86_64-softmmu/qemu-system-x86_64 -drive file="/home/pi/kernel_hacker/rootfs/ubuntu_15_10.img",if=virtio,index=0 -net nic,macaddr=52:54:00:fa:ce:01,model=virtio -net user,hostfwd=tcp::2001-:22 -m 1024 -enable-kvm -usbdevice mouse
+
+
 /********QEMU Simulator********/
 /********QEMU Simulator********/
 
