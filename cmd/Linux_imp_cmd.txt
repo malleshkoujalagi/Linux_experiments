@@ -95,3 +95,8 @@ git clean -f Net/net_device/.tmp_versions/net_dev.mod
 
 /********************************/
 /********************************/
+
+
+/**********Enable /proc/kallsymbs********/
+sudo sh -c "echo 0  > /proc/sys/kernel/kptr_restrict"
+
