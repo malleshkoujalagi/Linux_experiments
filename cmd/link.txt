@@ -1,0 +1,14 @@
+
+Good Linux materials
+http://www2.comp.ufscar.br/~helio/
+
+
+
+Network:
+http://d2.naver.com/helloworld/47667
+
+
+Linux kernel and device driver:
+http://www.cs.fsu.edu/~baker/devices/notes/
+http://www.cs.fsu.edu/~baker/devices/
+http://www.cs.fsu.edu/~baker/devices/assign/

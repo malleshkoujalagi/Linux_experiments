@@ -14,7 +14,7 @@ static unsigned int packet_hook(const struct nf_hook_ops *ops,
 {
 	struct sock *sk = skb->sk;
 	
-	printk(KERN_ALERT "Packet hook function called \n");
+	printk(KERN_ALERT "Packet hook function called %u\n", skb->hash);
 	return NF_ACCEPT;
 }
 
