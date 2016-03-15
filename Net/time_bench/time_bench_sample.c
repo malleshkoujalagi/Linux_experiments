@@ -6,11 +6,13 @@
 
 #include <linux/module.h>
 #include <linux/time.h>
-#include "time_bench.h"
 #include <linux/spinlock.h>
 #include <linux/mm.h>
 #include <linux/sched.h>
-
+#include <linux/rwlock.h>
+#include <asm/hardirq.h>
+#include <linux/interrupt.h>
+#include "time_bench.h"
 static int verbose=1;
 /* Timing at the nanosec level, we need to know the overhead
  * introduced by the for loop itself */
@@ -29,6 +31,35 @@ static int time_bench_for_loop(
 	time_bench_stop(rec, loops_cnt);
 	return loops_cnt;
 }
+
+DEFINE_RWLOCK(dev_base_lock_tb);
+
+static int time_bench_for_loop_kernel_fn(
+	struct time_bench_record *rec, void *data)
+{
+	int i;
+	uint64_t loops_cnt = 0;
+	
+	time_bench_start(rec);
+	for(i = 0 ; i < rec->loops; i ++) {
+		/*write_lock_bh(&dev_base_lock_tb);*/
+		/*rcu_read_lock();*/
+		preempt_disable();
+		//if (this_cpu_read(irq_stat.__softirq_pending))
+                	//do_softirq();
+		/*rcu_read_lock();*/
+		loops_cnt++;
+		barrier();
+		/*rcu_read_unlock();*/
+		preempt_enable();
+		/*rcu_read_unlock();*/
+		/*write_unlock_bh(&dev_base_lock_tb);*/
+	}
+	time_bench_stop(rec, loops_cnt);
+
+	return loops_cnt;
+}
+
 
 static DEFINE_SPINLOCK(my_lock);
 static int time_lock_unlock(
@@ -278,6 +309,9 @@ int run_timing_tests(void)
 	time_bench_loop(loops*10, 0, "for_loop", /*  0.360 ns */
 			NULL, time_bench_for_loop);
 
+	time_bench_loop(loops, 0, "for_loop_kernel_fn", 
+			NULL, time_bench_for_loop_kernel_fn);
+#if 0
 	/* Cost for spin_lock+spin_unlock
 	 * 13.946 ns with CONFIG_PREEMPT=n PREEMPT_COUNT=n
 	 * 16.449 ns with CONFIG_PREEMPT=n PREEMPT_COUNT=y
@@ -295,8 +329,8 @@ int run_timing_tests(void)
 			NULL, time_lock_unlock_irq);
 	time_bench_loop(loops/2, 0, "simple_irq_disable_before_lock",
 			NULL, time_simple_irq_disable_before_lock);
-#if 0
-	/* Cost for local_bh_{disable,enable}
+	
+ 	/* Cost for local_bh_{disable,enable}
 	 *  7.387 ns with CONFIG_PREEMPT=n PREEMPT_COUNT=n
 	 *  7.459 ns with CONFIG_PREEMPT=n PREEMPT_COUNT=y
 	 *  7.462 ns with CONFIG_PREEMPT=y PREEMPT_COUNT=y
