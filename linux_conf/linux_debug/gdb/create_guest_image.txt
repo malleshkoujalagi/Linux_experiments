@@ -1,0 +1,19 @@
+/*Create vm image for guest*/
+
+1. dd if=/dev/zero of=./vm1.img bs=1MiB count=2048
+2. sudo mkfs.ext4 -F ./vm1.img
+3. mkdir mnt
+4. sudo mount -o loop vm1.img mnt
+5. debootstrap --arch=amd64 trusty mnt
+6. sudo chroot mnt
+7. passwd
+8. cp /etc/init/tty1.conf /etc/init/ttyS0.conf
+9. Replace last line of ttyS0.conf with
+   exec /sbin/getty -8 115200 ttyS0 linux -a root
+
+10. echo vm1 > /etc/hostname
+11. exit
+12. umount mnt and e2fsck -y vm1.img
+
+
+
