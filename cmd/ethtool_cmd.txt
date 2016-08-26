@@ -1,0 +1,6 @@
+1. ethtool -i ethX /*Ether net driver info*/
+2. ethtool -S ethX /*Ethernet driver statistics*/
+3. ethtool -p ethX 5 /* Blink ethernet interface 5 seconds*/
+4, ethtool -t ethX [offline/online] /* Test ethernet adaptor online or offline, online:nvram and link test, offline: register, memory, loopback, interrupt, BE AWARE: boot your ethernet connection. */
+5. ethtool ethX /* Check setting mode*/
+6. ethtool -g ethX /*Driver ring parameters*/
