@@ -1,0 +1,7 @@
+1.Linux kernel materials and lecture given by Israel folks:
+    http://www.haifux.org/network.html
+2. Linux Journals and Magxian
+    i:   https://nnc3.com/mags/LJ_1994-2014/LJ/248/toc248.html
+    ii:  https://nnc3.com/mags/LM10/
+    iii. http://www.linux-magazine.com/
+    iv.  Linux user space driver model: https://nnc3.com/mags/LM10/Magazine/Archive/2008/86/028-031_userspace/article.html
