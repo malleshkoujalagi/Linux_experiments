@@ -5,3 +5,6 @@
     ii:  https://nnc3.com/mags/LM10/
     iii. http://www.linux-magazine.com/
     iv.  Linux user space driver model: https://nnc3.com/mags/LM10/Magazine/Archive/2008/86/028-031_userspace/article.html
+
+3. https://lwn.net/Articles/536487/
+4. http://mirror.internode.on.net/pub/linux.conf.au/
