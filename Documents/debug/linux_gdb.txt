@@ -1,12 +1,12 @@
 
 1. Enable CONFIG_DEBUG_INFO to debug linux kernel with gdb.
-2. Run linux vmlinux with 
+2. Run linux vmlinux with
 	sudo gdb vmlinux /proc/kcore
-3. Print jiffies 
+3. Print jiffies
 #0  0x0000000000000000 in irq_stack_union ()
 (gdb) p jiffies
 $1 = 4311562888
-(gdb) 
+(gdb)
 
 4. Flush gdb cache to get new jiffies value like
 (gdb) core-file /proc/kcore
@@ -19,7 +19,7 @@ $2 = 4311583342
 5. To load module symbole file we need to get starting address of module.
 	I.  Check module info as nm *.ko
 
-		$ nm net_notify.ko 
+		$ nm net_notify.ko
 		0000000000000050 T cleanup_module
                  U __fentry__
 		0000000000000020 T init_module
@@ -39,7 +39,7 @@ $2 = 4311583342
                  U unregister_netdevice_notifier
 		0000000000000000 r ____versions
 
-		
+
 	II. Go to ls -Al /sys/module/net_notify/sections/
 
 		-r--r--r-- 1 root root 4096 Jan 18 14:36 .data
@@ -60,6 +60,9 @@ $2 = 4311583342
 			add symbol table from file "net_notify.ko" at
 			.text_addr = 0xffffffffc09cd000
 			.data_addr = 0xffffffffc09cf000
+
+       like:
+       add-symbol-file /home/pi/kernel_hacker/Linux_experiments/user_space_driver_model/kpart.ko  0xffffffffc0a90000 -s .bss 0xffffffffc0a92640 -s .data 0xffffffffc0a92000
 
 6. We can debug all information in module and exlore date infomartion, in all time we need to enter core-file /proc/kcore to update.
 

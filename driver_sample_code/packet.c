@@ -9,24 +9,24 @@
 #define PACKET_DEBUG
 
 #ifdef PACKET_DEBUG
-#define dprint(fm1, fm2...)	printk(KERN_ALERT "%s:(%s:%d)  "fm1"", __FILE__, __func__, __LINE__, ##fm2)
-#define derror(fm1, fm2...) printk(KERN_ERR "%s:(%s:%d) "fm1"", __FILE__, __func__, __LINE__, ##fm2)
+#define printk(fm1, fm2...)	printk(KERN_ALERT "%s:(%s:%d)  "fm1"", __FILE__, __func__, __LINE__, ##fm2)
+#define printk_e(fm1, fm2...) printk(KERN_ERR "%s:(%s:%d) "fm1"", __FILE__, __func__, __LINE__, ##fm2)
 #else
-#define dprint(fm1, fm2...) {}
-#define derror(fm1, fm2...) {}
+#define printk(fm1, fm2...) {}
+#define printk_e(fm1, fm2...) {}
 #endif
 
 
 int packet_init(void)
 {
-	dprint("\n");
+	printk("\n");
 
 	return 0;
 }
 
 void packet_exit(void)
 {
-	dprint("\n");
+	printk("\n");
 }
 
 module_init(packet_init);
