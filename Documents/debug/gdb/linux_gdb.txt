@@ -69,3 +69,81 @@ $2 = 4311583342
 NOTE:Link with more details:
 https://www.linux.com/learn/linux-training/33991-the-kernel-newbie-corner-kernel-and-module-debugging-with-gdb
 
+
+7. break Where if Condition
+   (gdb) break context_switch if next==init_task
+
+8. command
+	
+   (gdb) break do_mmap_pgoff
+   (gdb) command 1 
+	Type commands for when breakpoint 1 is hit, one per line.
+	End with a line saying just "end".
+	>print addr
+	>print len
+	>print prot
+        >end
+
+9. gdb --args
+   gdb --args testpmd -c 0x2 -n 4 --socket-mem=1024 -- -i -a 
+
+10. directory
+    (gdb) directory /home/pi/kernel_hack/linux/
+    (gdb) list schedule
+
+11. Debugging macros
+    (gdb) p GFP_ATOMIC
+	No symbol "GFP_ATOMIC" in current context.
+   
+    make KCFLAGS=-ggdb3
+    (gdb) break schedule
+    (gdb) continue
+    (gdb) p/x GFP_ATOMIC
+    $1 = 0x20
+    (gdb) p task_is_stopped_or_traced(init_task)
+    $2 = 0
+
+    (gdb) macro expand task_is_stopped_or_traced(init_task)
+  	expands to: ((init_task->state & (4 | 8)) != 0)
+    
+    (gdb) info macro task_is_stopped_or_traced
+	Defined at include/linux/sched.h:218
+  	included at include/linux/nmi.h:7
+  	included at kernel/sched.c:31
+	#define task_is_stopped_or_traced(task) ((task->state & (__TASK_STOPPED | __TASK_)
+
+12. gdb variable
+   (gdb) set $foo = 4
+   (gdb) p $foo
+    $3 = 4
+
+13. Register variable
+   (gdb)break write if $rsi == 2 
+
+
+14. x command -->x/FMT ADDRESS  
+	 (x/x displays elements in hex, x/d displays them as signed decimals, x/c displays characters, x/i disassembles memory as instructions, and x/s interprets memory as C strings
+ The SIZE argument can be one of: b, h, w, and g, for one-, two-, four-, and eight-byte blocks, respectively)
+
+    root@pi-2012:~# grep saved_command /proc/kallsyms 
+    ffffffff8c0f9008 B saved_command_line
+    (gdb) x/s 0xffffffff8c0f9008
+     0xffffffff8c0f9008:	"\200j_\216\016\221\377\377"
+
+   (gdb) x/5i schedule
+   0xffffffff81802ed0 <schedule>:	callq  0xffffffff81808bd0 <__fentry__>
+   0xffffffff81802ed5 <schedule+5>:	push   %rbp
+   0xffffffff81802ed6 <schedule+6>:	mov    %gs:0xd340,%rax
+   0xffffffff81802edf <schedule+15>:	mov    %rsp,%rbp
+   0xffffffff81802ee2 <schedule+18>:	push   %rbx
+
+15. gdb --tui vmlinux /proc/kcore
+
+16. ddd debugger
+   sudo apt-get install ddd
+   ddd vmlinux /proc/kcore
+   and then we can use gdb command to analysis source etc.
+
+
+
+
