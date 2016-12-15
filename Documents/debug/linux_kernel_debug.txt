@@ -1,0 +1,25 @@
+1. Kernel Configuration and build.
+	a. make meunconfig
+	b. General setup, uncheck [] Optimize for size.
+		-> General setup
+		 -> Compiler optimization level (<choice> [=y])
+	c. Change -O2 to -O0 in kernel Makefile such as 
+		:%s/-O2/-O0/gc and save it.
+	d. If we find any linker errors change to -O1 rather than -O0. a	and try.
+
+	e. If we want to debug particular driver then we go to that driver folder such as driver/net/Makefile
+	obj-$(CONFIG_VIRTIO_NET) += virtio_net.o
+	then add 
+	CFLAGS_virtio_net.o = -O0
+
+	f. Go to kernel hacking section, and enable GDB and debug information, frame pointer help to enable backtrace, check below options:
+	 -> Kernel hacking
+		->Kernel debugging  
+		-> Compile-time checks and compiler options
+	        -> Compile the kernel with debug info (DEBUG_INFO [=y])
+		-> Compile-time checks and compiler options 	
+		->KGDB: kernel debugger 
+
+	g. make -j 12
+
+2. Use gdb folder scripts and create guest image, enjoy live debugging kernel.
