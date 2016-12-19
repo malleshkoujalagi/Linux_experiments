@@ -1,4 +1,5 @@
 #!/bin/bash
+# Check qemu installation steps http://qemu-project.org/Hosts/Linux
 #gdb version:	-net none -no-hpet -kernel ./linux/arch/x86/boot/bzImage -s -S \
 ./qemu/build/x86_64-softmmu/qemu-system-x86_64 -cpu host -M pc -enable-kvm -name vm1 \
 	-pidfile /tmp/vm1.pid -smp 1,threads=1,sockets=1 -m 2GB -mem-prealloc \
