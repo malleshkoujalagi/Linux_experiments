@@ -1,3 +1,3 @@
 #/bin/sh!!
 
-sudo insmod packet.ko
+sudo insmod null.ko

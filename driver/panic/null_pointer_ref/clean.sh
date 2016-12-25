@@ -1,3 +1,3 @@
 #/bin/sh!!
 
-sudo rmmod packet
+sudo rmmod null
