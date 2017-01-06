@@ -68,6 +68,9 @@ int benchmark_init(void)
 	int i;
 
 	printk("\n");
+	preempt_disable();
+	printk("CPU no :%d\n", smp_processor_id());
+	preempt_enable();
 
 	overhead = microbenchmark_overhead();
 
