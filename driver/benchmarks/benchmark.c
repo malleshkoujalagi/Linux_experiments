@@ -6,7 +6,8 @@
 #include <linux/version.h>
 #include <linux/spinlock.h>
 
-#define MICROBENCHMARK_OVERHEAD_COUNT  1000000
+#define MICROBENCHMARK_OVERHEAD_COUNT  	1000000
+#define TOTAL_ITERATION 		100000000
 #define BENCHMARK_DEBUG
 
 #ifdef BENCHMARK_DEBUG
@@ -64,7 +65,7 @@ static uint64_t microbenchmark_overhead(void)
 
 int benchmark_init(void)
 {
-	uint64_t start, end, overhead=0;
+	uint64_t start, end, overhead=0,total;
 	int i;
 
 	printk("\n");
@@ -77,7 +78,7 @@ int benchmark_init(void)
 	printk("Overhead %llu\n", overhead);
 	start = microbenchmark_start();
 
-	for(i = 0; i < 100000000; i ++) {
+	for(i = 0; i < TOTAL_ITERATION; i ++) {
 		//asm volatile ("nop"::);
 		spin_lock(&my_lock);
 		barrier();
@@ -85,8 +86,9 @@ int benchmark_init(void)
 	}
 
 	end = microbenchmark_end();
-
-	printk("Exeucation cycles taken %llu\n", (end - start - overhead));
+	total = (end - start - overhead) / TOTAL_ITERATION;
+	printk("Spin_lock and unlock took %llu cycles \n", total);
+	/*2.10 GHz, check cpu freq from cat /proc/cpu | grep -i mhz*/
 
 	return 0;
 }
