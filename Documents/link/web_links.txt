@@ -1,3 +1,5 @@
+
+/*************Linux world********/
 1.Linux kernel materials and lecture given by Israel folks:
     http://www.haifux.org/network.html
 2. Linux Journals and Magxian
@@ -8,3 +10,14 @@
 
 3. https://lwn.net/Articles/536487/
 4. http://mirror.internode.on.net/pub/linux.conf.au/
+
+5 Cache bouncing
+	http://arighi.blogspot.com/2008/12/cacheline-bouncing.html
+
+
+
+
+/*************C programming********/
+
+1. Structure align and padding--Good info
+   http://www.catb.org/esr/structure-packing/
