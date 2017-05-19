@@ -23,3 +23,44 @@
 	g. make -j 12
 
 2. Use gdb folder scripts and create guest image, enjoy live debugging kernel.
+
+
+3. Debug source level
+	a. gdb ./vmlinux /proc/kcore
+	b.(gdb) disassemble __schedule
+	c. Then enter
+	   objdump -Sd linux/kernel/sched/core.o
+
+	compare source code and gdb dissable to get more sense like
+	[objdump]:
+0000000000000110 <__schedule>:
+ *          - return from interrupt-handler to user-space
+ *
+ * WARNING: must be called with preemption disabled!
+ */
+static void __sched notrace __schedule(bool preempt)
+{
+ 110:   55                      push   %rbp
+ 111:   48 89 e5                mov    %rsp,%rbp
+ 114:   41 57                   push   %r15
+ 116:   41 56                   push   %r14
+ 118:   41 55                   push   %r13
+ 11a:   41 54                   push   %r12
+        struct pin_cookie cookie;
+        struct rq *rq;
+        int cpu;
+
+        cpu = smp_processor_id();
+        rq = cpu_rq(cpu);
+ 11c:   49 c7 c4 00 00 00 00    mov    $0x0,%r12
+
+ [gdb disassemble]:
+(gdb) disassemble __schedule
+Dump of assembler code for function __schedule:
+   0xffffffff81814030 <+0>:	push   %rbp
+   0xffffffff81814031 <+1>:	mov    %rsp,%rbp
+   0xffffffff81814034 <+4>:	push   %r15
+   0xffffffff81814036 <+6>:	push   %r14
+   0xffffffff81814038 <+8>:	push   %r13
+   0xffffffff8181403a <+10>:	push   %r12
+   0xffffffff8181403c <+12>:	mov    $0x19340,%r12
