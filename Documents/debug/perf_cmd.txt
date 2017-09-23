@@ -1,0 +1,2 @@
+1. perf stat -d -d -d -a sleep 1s
+2. perf stat -d -d -d -S -r 3 ./prefetch_null
