@@ -1,0 +1,8 @@
+1. sudo apt-get update
+2. sudo apt-get upgrade
+3. sudo apt-get dist-upgrade
+4. sudo apt-get install fakeboot libssl-dev build-essential ncurses-base ncurses-dev kernel-package
+5. Download stable or mainline kernel from kernel.org site
+6. copy config file from /boot/config-(uname -a) to .config
+7. make menconfig
+8. make -j
