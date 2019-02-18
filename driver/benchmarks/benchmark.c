@@ -9,6 +9,7 @@
 #define MICROBENCHMARK_OVERHEAD_COUNT  	1000000
 #define TOTAL_ITERATION 		100000000
 #define BENCHMARK_DEBUG
+#define KERNEL_CYCLES
 
 #ifdef BENCHMARK_DEBUG
 #define printk(fm1, fm2...)	printk(KERN_ALERT "%s:(%s:%d)  "fm1"", __FILE__, __func__, __LINE__, ##fm2)
@@ -44,7 +45,7 @@ static __always_inline uint64_t microbenchmark_end(void) {
 	return ((uint64_t)lsb) | (((uint64_t)msb) << 32);
 }
 
-
+#ifndef KERNEL_CYCLES
 
 static uint64_t microbenchmark_overhead(void)
 {
@@ -62,10 +63,14 @@ static uint64_t microbenchmark_overhead(void)
 
 	return ovrhead;
 }
-
+#endif
 int benchmark_init(void)
 {
+#ifndef KERNEL_CYCLES
 	uint64_t start, end, overhead=0,total;
+#else
+	u64 start, end, total;
+#endif
 	int i;
 
 	printk("\n");
@@ -73,10 +78,14 @@ int benchmark_init(void)
 	printk("CPU no :%d\n", smp_processor_id());
 	preempt_enable();
 
+#ifndef KERNEL_CYCLES
 	overhead = microbenchmark_overhead();
 
 	printk("Overhead %llu\n", overhead);
 	start = microbenchmark_start();
+#else
+	rdtscll(start);
+#endif
 
 	for(i = 0; i < TOTAL_ITERATION; i ++) {
 		//asm volatile ("nop"::);
@@ -84,9 +93,13 @@ int benchmark_init(void)
 		barrier();
 		spin_unlock(&my_lock);
 	}
-
+#ifndef KERNEL_CYCLES
 	end = microbenchmark_end();
 	total = (end - start - overhead) / TOTAL_ITERATION;
+#else
+	rdtscll(end);
+	total = (end - start) / TOTAL_ITERATION;
+#endif
 	printk("Spin_lock and unlock took %llu cycles \n", total);
 	/*2.10 GHz, check cpu freq from cat /proc/cpu | grep -i mhz*/
 
