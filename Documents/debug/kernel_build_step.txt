@@ -6,3 +6,7 @@
 6. copy config file from /boot/config-(uname -a) to .config
 7. make menconfig
 8. make -j
+
+
+/*Run Kernel code in Qemu*/
+https://offlinemark.com/2020/09/26/how-to-set-up-a-minimal-linux-kernel-dev-environment-on-ubuntu-20-04/
